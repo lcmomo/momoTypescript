@@ -1,0 +1,25 @@
+{
+  "name": "sdk",
+  "version": "1.0.0",
+  "description": "#### 规范：  1. 最少原则 尽量减少依赖，多扩展 2. 专注于某个领域 3. 足够稳定（breakchange） 4. Hook 机制， （热插拔）",
+  "main": "dist/momo-sdk.js",
+  "source": "src/index.ts",
+  "module": "dist/momo-sdk.module.js",
+  "unpkg": "dist/momo-sdk.umd.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "microbundle",
+    "dev": "microbundle watch",
+    "api:init": "api-extractor init",
+    "api:run": "api-extractor run  --local --verbose",
+    "api:doc": "typedoc --out docs src"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@microsoft/api-extractor": "^7.13.0",
+    "microbundle": "0.13.0",
+    "typedoc": "^0.20.14"
+  }
+}

@@ -1,0 +1,102 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 1,
+    "passes": 1,
+    "pending": 0,
+    "failures": 0,
+    "start": "2021-01-24T02:53:31.380Z",
+    "end": "2021-01-24T02:53:31.400Z",
+    "duration": 20,
+    "testsRegistered": 1,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "53e5a5c5-d6e3-4906-8f76-b0ed140266f2",
+      "title": "",
+      "fullFile": "",
+      "file": "",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "4e8cdbd9-7b84-453f-856d-9e03f1a60a3e",
+          "title": "基础service接口测试",
+          "fullFile": "/Users/chao/learn/Course/TypeScript/base/TS_webpack_config/tests/server/router.spec.js",
+          "file": "/tests/server/router.spec.js",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "getHello路由测试",
+              "fullTitle": "基础service接口测试 getHello路由测试",
+              "timedOut": false,
+              "duration": 15,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "axios.get(\"http://localhost:3000/api/getHello\")\n.then(function (response) {\n    const result = response.data.data;\n    if (result == \"Hello World!\") {\n        done();\n    } else {\n        done(new Error(\"接口错误\"))\n    }\n})\n.catch(function (error) {\n    console.log(error);\n    done(new Error(\"接口错误\"))\n});\n// .finally(function () {\n//     done(new Error(\"接口错误\"))\n// })",
+              "err": {},
+              "uuid": "2395bdd5-e309-4b91-851f-261132441a88",
+              "parentUUID": "4e8cdbd9-7b84-453f-856d-9e03f1a60a3e",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "2395bdd5-e309-4b91-851f-261132441a88"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 15,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "8.2.1"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "mochawesome",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "6.2.1"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "./docs/mochawesome"
+      },
+      "version": "5.1.0"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "name": "momo-sdk",
+  "version": "1.0.0",
+  "description": "mySdk",
+  "bin": {
+    "xx": "bin/momo"
+  },
+  "main": "lib/index.js",
+  "types": ".types/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "rollup -C"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "rollup": "^2.26.11",
+    "rollup-plugin-typescript2": "^0.27.2",
+    "typescript": "^4.0.2"
+  }
+}
