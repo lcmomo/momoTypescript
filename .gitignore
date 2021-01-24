@@ -1,4 +1,4 @@
 node_modules
 code/
 TS实战/
-*.package-lock.json
+package-lock.json
