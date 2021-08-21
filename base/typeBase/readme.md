@@ -3,6 +3,11 @@
 为什么要学？
 
 特点： 静态的（编译时报错），类型的。有利于多人协作，代码可读性。
+Javascript的超集：
+
+- TS里可以使用一些尚在提案阶段的语法特性，可以有访问控制符，与js最主要区别是，TS是静态语言
+- coffeescript本质上是js的语法糖化，ES2015参考了大量coffeescript的内容进行了标准化，因此coffeescript优势就不存在了。TS的静态性是他立于不败之地的基础。
+
 
 严谨但不失灵活
 
@@ -15,6 +20,7 @@
 
 - any 多人协作项目的大忌，不应该首先考虑此类型
 - unknown 与any不同之处： unknown类型被确定是某个类型之前，不能被进行任何操作，如实例化，getter，函数执行等
+- never: 表示永远不存在的值的类型，never类型是任何类型的子类型，也可以赋值给任何类型；但是没有类型是never类型的子类型或可以赋值给never类型（除了never本身之外）
 
 #### 数组：
 - 泛型定义： 
@@ -51,10 +57,11 @@ let x: [string, number];
 x = ['hello', 10];
 x.push(2);
 console.log(x); // ['hello', 2] 
-console.log(2) ; // error 
+console.log(x[2]) ; // error 
 ```
 ### 枚举类型
 用于声明一组命名的常数，当一个变量有几种可能的取值时，可以将它定义为枚举类型
+- for in 遍历对象的可枚举属性
 #### 数字枚举
 
 当我们声明一个枚举类型时，虽未给他们赋值，但默认为数字类型且从0开始依次累加，当把第一个赋值后，后面也会跟着累加
@@ -144,7 +151,7 @@ const enum Direction {
 
 declare let a: Direction
 
-emun Animal {
+enum Animal {
     Dog,
     Cat
 }
@@ -230,7 +237,7 @@ interface Config {
 //   [propName: string]: any
 // }
 
-function CalculateAreas(config: Config) {
+function CalculateAreas(config: Config): {area: number} {
   let square = 100;
   if (config.width) {
     square = config.width * config.width;
@@ -253,7 +260,7 @@ interface VIPUser extends User, SupperUser {
 
 #### 抽象类
 
-抽象类作为其他派生类的基类使用，一般不会直接实例化， 通常需要创建子类继承基类，实例化子类
+抽象类作为其他派生类的基类使用，一般不会直接实例化(接口可以定义方法，但不能实现方法，抽象类可以)， 通常需要创建子类继承基类，实例化子类
 ```js
 abstract class Animal {
   abstract makeSound (): void;
@@ -308,7 +315,7 @@ const add = (a: number, ...rest: number[]) => rest.reduce(((a,b) => a + b), b)
 ```
 #### 重载
 ```js
-/ 重载
+// 重载
 interface Direction2 {
   top: number,
   right: number,
@@ -377,6 +384,11 @@ class Stack <T> {
 function getValues<T extends object, U extends keyof T>(obj: T, key: U) {
     return obj[key] // ok
 }
+let a2 = {
+  a: 1,
+  b: 2
+}
+getValues(a2, a);
 ```
 #### 使用多重类型进行泛型约束
 泛型与new
@@ -388,7 +400,18 @@ function factory<T>(type: {new (): T}): T {
 ```
 ### 装饰器
 
+装饰器是一种特殊类型的声明，能够被附加到类声明，方法，访问符，属性或参数上。使用@expression形式，
+expression求值后必须为一个函数，它会在运行时被调用，被装饰的声明信息作为参数传入
+
 #### 类装饰器
+
+类装饰器在类声明之前被声明（紧靠类声明），应用于类构造函数，可以用来监视，修改或者替换类定义，类装饰器不能再声明文件中，也不能用在任何外部上下文（比如declare的类）
+类装饰器表达式会在运行时当做函数被调用，类的构造函数作为其唯一的参数。
+
+如果类装饰器返回一个值，他会使用提供的构造函数来替换类的声明
+
+<b>注意：</b> 如果你要返回一个新构造函数，你必须处理好原来的原型链
+
 ```js
 function addAge(target: Function) {
   target.prototype.age = 18;
@@ -409,7 +432,78 @@ let person = new Person2();
 console.log(person.age);
 person.say();
 
+ // 装饰器工厂
+ function color(value: string) { // 这是一个装饰器工厂
+   return function (target) { // 这是装饰器
+     // do sth with target and value...
+   }
+ }
+
 ```
+#### 方法装饰器
+方法装饰器声明在一个方法的声明之前（紧靠方法声明），会被应用到方法的属性描述符上，可以用来监视，修改或者替换方法定义，方法装饰器不能用在声明文件（.d.ts），重载，或者任何外部上下文（比如declare类）中
+
+方法装饰器表达式会在运行时当做函数被调用，传入三个参数：
+1. 对于静态成员来说是类的构造函数，对于实例成员是类的原型对象
+2. 成员的名字
+3. 成员的属性描述符（如果输出target版本小于ES5，属性描述符会是undefined）
+
+如果方法装饰器返回一个值，它会被用作方法的属性描述符
+```js
+// 声明装饰器修饰方法/属性
+ function method( target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+   console.log(target);
+   console.log("desc: ", JSON.stringify(descriptor) + "\n\n" );
+   descriptor.writable = false;
+ }
+
+ class Person3 {
+  name: string;
+  constructor() {
+    this.name = 'lc';
+  }
+
+  @method
+  say() {
+    return 'instance method'
+  },
+  @method
+  static run () {
+    return 'static method'
+  }
+ 
+ }
+ ```
+
+ #### 属性装饰器
+ 属性装饰器声明在一个属性声明之前（紧靠着属性声明），不能用于声明文件（.d.ts）,或者任何外部上下文里
+ 属性装饰器表达式会在运行时当做函数被调用，传入两个参数
+  1. 对于静态成员来说是类的构造函数，对于实例成员是类的原型对象
+  2. 成员的名字
+
+#### 参数装饰器（使用最广）
+```js
+function logParameter(target: Object, propertyKey: string, index: number) {
+  console.log(target, propertyKey, index);
+}
+
+class Person3 {
+  greet(@logParameter message: string, @logParameter name: string): string {
+    return `${message} ${name}`;
+  }
+}
+
+const p = new Person3();
+p.greet('hello', 'lc'); // =>  Person3 { greet: [Function] } 'greet' 1
+
+```
+
+#### 元编程库
+
+npm ： reflect-metadata
+
+
+
 ## TS2
 
 #### 交叉类型
@@ -417,8 +511,9 @@ person.say();
 交叉类型是将多个类型合并为一个类型。这让我们可以把现有的多种类型叠加到一起成为一种类型，它包含了所需的所有类型的特性。
 
 ```js
-function mixin<T extends object, U>(first: T, second: U): T & U {
-  const result = <T & U>{};
+
+function mixin<T extends object, U extends object>(first: T, second: U): T & U {
+  const result: <T & U> = {};
   for (let id in first) {
     (<T> result)[id] = first[id];
   }
@@ -646,12 +741,12 @@ example("hello world")
 #### 可调用类型注解
 ```js
 interface ToString {
-   (): string;
+   (): string;  // 注释掉这一行
    new(): string;
 }
 
 declare const somethingToString: ToString;
-somethingToString()
+somethingToString()  // 这里就会报错
 new somethingToString()
 ```
 #### 索引类型
@@ -663,8 +758,8 @@ interface Obj {
     [key: string]: any
 }
 
-function pick(o: obj, names: string[]) {
-    return names.map( n => obj[n]);
+function pick(o: Obj, names: string[]) {
+    return names.map( n => o[n]);
 }
 
 // 高级框架版
@@ -695,6 +790,28 @@ interface User {
 type partial<T> = { [ K in keyof T]?: T[K] }
 type partialUser = partial<User>
 type readonlyUser = Readonly<User>
+```
+
+#### 条件类型与联合类型
+条件类型有一个特征，就是「分布式有条件类型」，但是分布式有条件类型类型有前提，条件类型里待检查的类型必须是naked type parameter,
+
+naked type parameter 指的是裸类型参数，「裸」指类型参数没有被包装在其他类型里，比如没有被数组，元祖，函数，Promise等等包裹
+```js
+// 裸类型参数
+type NakedUsage<T> = T extends boolean ? "YES" : "NO"
+
+// 参数被包裹在元祖内
+type WrappedUsage<T> = [T] extends [boolean] ? "YES" : "NO"
+
+type Diff<T, U> = T extends U ? never : T;
+type R = Diff<'a' | 'b' | 'c' | 'd', 'a' | 'c' | 'f'>; // 'b', 'd'
+type Filter<T, U> = T extends U ? T : never;
+type R1 = Filter<string | number | (() => void), Function>;
+
+// 删除null 和undefined
+type NonNullable2<T> = Diff<T, null | undefined>;
+type R2 = NonNullable2<string | number | undefined>;
+
 ```
 ### infer 关键字
 
@@ -756,6 +873,25 @@ type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
 type Foo = Omit<{name: string, age: number}, 'name'>
 // Omit <T,K>  作用是忽略T中某些属性
 ```
+
+##### Record
+
+Record 允许从Union类型中创建新类型，Union类型中的值用作新类型的属性
+
+```js
+
+type Car = 'Audi' | 'BMW' | 'MercedesBenz';
+type CarList = Record<Car, {age: number}>;
+
+const cars: CarList = {
+  Audi: { age: 119 },
+  BMW: { age: 113},
+  MercedesBenz: { age: 133 }
+}
+
+// 实战中尽量多用Record， 会帮助你规避很多错误，在Vue或者react中有很多场景选择record是更优解
+```
+
 ### TypeScript 编译原理
 #### 编译器组成
 TypeScript有自己的编译器，主要由以下部分组成：
@@ -767,14 +903,21 @@ TypeScript有自己的编译器，主要由以下部分组成：
 
 #### 编译器的处理
 
-- 扫描器通过扫描源码生成Token流：
-- 解析器将Token流解析为抽象语法树（AST）：
-- 绑定器将AST中的声明节点与相同实体的其他声明相连形成符号（Symbols），符号是语义系统的主要构造块
-- 检查器通过符号和AST来验证源代码的语义：
+- 扫描器通过扫描源码生成Token流：（源码 + 扫描器 =》 Token流）
+- 解析器将Token流解析为抽象语法树（AST）：（Token流 + 解析器 =》 AST抽象语法树）
+- 绑定器将AST中的声明节点与相同实体的其他声明相连形成符号（Symbols），符号是语义系统的主要构造块： （AST + 绑定器 =》 Symble符号
+- 检查器通过符号和AST来验证源代码的语义：（AST + 符号 + 检查器 =》 类型验证）
 
-最后我们通过发射器生成Javascript代码
+最后我们通过发射器生成Javascript代码： （AST + 检查器 + 发射器 =》 JS代码）
 
 #### 编译器处理流程
 - 解析
 - 转换
 - 生成
+
+
+### 元数据
+reflect-metadata
+#### Vue 中使用TS
+npm : vue-property-decorator  vue 属性装饰器
+

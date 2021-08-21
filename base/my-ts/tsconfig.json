@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "ES2015",
+      "DOM"
+    ],
+    "noImplicitThis": true,
+    "noImplicitAny": true,
+    "strict": true,
+    "experimentalDecorators": true
+  }
+}

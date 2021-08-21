@@ -109,9 +109,47 @@ console.log(greeter(user))
 // person.say();
 
 
+ // 声明装饰器修饰方法/属性
+//  function method( target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+//    console.log(target);
+//    console.log("desc: ", JSON.stringify(descriptor) + "\n\n" );
+//    descriptor.writable = false;
+//  }
+
+//  class Person3 {
+//   name: string;
+//   constructor() {
+//     this.name = 'lc';
+//   }
+
+//   @method
+//   say() {
+//     return 'instance method'
+//   },
+//   @method
+//   static run () {
+//     return  'static method'
+//   }
+ 
+//  }
+
+// function logParameter(target: Object, propertyKey: string, index: number) {
+//   console.log(target, propertyKey, index);
+// }
+
+// class Person3 {
+//   greet(@logParameter message: string, @logParameter name: string): string {
+//     return `${message} ${name}`;
+//   }
+// }
+
+// const p = new Person3();
+// p.greet('hello', 'lc');
+
+
 // 联合类型（minxin）
 
-function mixin<T extends object, U>(first: T, second: U): T & U {
+function mixin<T extends object, U extends object>(first: T, second: U): T & U {
   const result = <T & U>{};
   for (let id in first) {
     (<T> result)[id] = first[id];
@@ -192,37 +230,37 @@ function formatCommandline(command: string[] | string) {
 // }
 
 
-class Person {
-  constructor(public weight: number, public name: string, public born: string) {}
-}
+// class Person {
+//   constructor(public weight: number, public name: string, public born: string) {}
+// }
 
-interface Dog {
-  name: string;
-  weight: number
-}
+// interface Dog {
+//   name: string;
+//   weight: number
+// }
 
-let x2: Dog = new Person(120, 'll', 'xa') // ok
+// let x2: Dog = new Person(120, 'll', 'xa') // ok
 
 
-let q = (a: number) => 0;
-let y = (b: number, s: string) => 0;
+// let q = (a: number) => 0;
+// let y = (b: number, s: string) => 0;
 
-y = q; //ok
-q = y; // error 不能将类型 (b: number, s: string) => number 分配给类型 (a: number) =>  number
+// y = q; //ok
+// q = y; // error 不能将类型 (b: number, s: string) => number 分配给类型 (a: number) =>  number
 
-let foo = (x: number, y: number) => { }
-let bar = (x?: number, y?: number) => {}
-let bas = (...args: number[]) => {}
+// let foo = (x: number, y: number) => { }
+// let bar = (x?: number, y?: number) => {}
+// let bas = (...args: number[]) => {}
 
-foo = bar = bas; //ok
-bas = bar = foo; //ok  
-// 当把strictNullChecks 设置为false时，是兼容的
+// foo = bar = bas; //ok
+// bas = bar = foo; //ok  
+// // 当把strictNullChecks 设置为false时，是兼容的
 
-let foo2 = (x: number, y: number) => { }
+// let foo2 = (x: number, y: number) => { }
 
-let bar2 = (x?: number) => {}
-foo2 = bar2 //ok
-bar2 = foo2 // error
+// let bar2 = (x?: number) => {}
+// foo2 = bar2 //ok
+// bar2 = foo2 // error
 
 class Animal2 {
   feet: number;
@@ -278,6 +316,16 @@ interface User {
 type partial<T> = { [ K in keyof T]?: T[K] }
 type partialUser = partial<User>
 type readonlyUser = Readonly<User>
+
+// 条件类型与联合类型
+type Diff<T, U> = T extends U ? never : T;
+type R = Diff<'a' | 'b' | 'c' | 'd', 'a' | 'c' | 'f'>; // 'b', 'd'
+type Filter<T, U> = T extends U ? T : never;
+type R1 = Filter<string | number | (() => void), Function>;
+
+// 删除null 和undefined
+type NonNullable2<T> = Diff<T, null | undefined>;
+type R2 = NonNullable2<string | number | undefined>;
 
 interface User {
   id: number,
